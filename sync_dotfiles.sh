@@ -5,7 +5,10 @@
 # ==========================================
 DOTFILES_DIR="$HOME/dotfiles"
 CONFIG_DIR="$HOME/.config"
-INDEX_FILE="$DOTFILES_DIR/.sync_index"
+
+# XDG-konformer Pfad für die Status-Datei (außerhalb des Git-Repos!)
+STATE_DIR="$CONFIG_DIR/dotfiles-sync"
+INDEX_FILE="$STATE_DIR/sync_state"
 
 # Prüfen, ob gum installiert ist
 if ! command -v gum &>/dev/null; then
@@ -21,7 +24,7 @@ echo -e "\n✨ Willkommen im Dotfiles-Manager\n"
 # Finde alle echten Verzeichnisse im dotfiles-Ordner (ignoriert .git)
 AVAILABLE_DIRS=$(find "$DOTFILES_DIR" -mindepth 1 -maxdepth 1 -type d ! -name ".git" -exec basename {} \;)
 
-# Lese den aktuellen Index (falls vorhanden), um Checkboxen vorab auszuwählen
+# Lese den aktuellen Index aus ~/.config aus, um Checkboxen vorab auszuwählen
 if [ -f "$INDEX_FILE" ]; then
   PREVIOUS_SELECTION=$(cat "$INDEX_FILE")
 else
@@ -34,7 +37,7 @@ fi
 echo "Wähle die Konfigurationen, die synchronisiert (verlinkt) werden sollen:"
 echo "(Leertaste = Auswählen/Abwählen | Enter = Bestätigen)"
 
-# Gum baut hier das interaktive Menü
+# Gum baut das interaktive Menü
 SELECTED=$(echo "$AVAILABLE_DIRS" | gum choose --no-limit --selected="$PREVIOUS_SELECTION" --height 15)
 
 # Wenn der Nutzer abbricht (ESC)
@@ -46,10 +49,6 @@ fi
 # ==========================================
 # 3. Logik: Verlinken vs. Entkoppeln
 # ==========================================
-# Wir formatieren die Strings in Arrays, um sie besser vergleichen zu können
-IFS=',' read -r -a OLD_ARRAY <<<"$PREVIOUS_SELECTION"
-IFS=$'\n' read -r -d '' -a NEW_ARRAY <<<"$SELECTED"
-
 echo ""
 gum spin --spinner dot --title "Verarbeite Konfigurationen..." -- sleep 1
 
@@ -72,24 +71,28 @@ for dir in $AVAILABLE_DIRS; do
       echo "✂️  Entkopple Sync für: $dir"
       # Link löschen
       rm "$TARGET_DIR"
-      # Den aktuellen Stand aus dem Git-Repo als echten Ordner nach .config kopieren
+      # Den aktuellen Stand als echten lokalen Ordner kopieren
       cp -r "$SOURCE_DIR" "$TARGET_DIR"
       echo "   -> Aktueller Stand wurde als lokaler Ordner nach ~/.config/$dir geschrieben."
     fi
   fi
 done
 
-# Neuen Zustand im Index speichern (Komma-separiert für gum choose)
+# ==========================================
+# 4. Status sicher speichern
+# ==========================================
+# Erstelle den versteckten Config-Ordner, falls er nicht existiert
+mkdir -p "$STATE_DIR"
+# Speichere die Auswahl (Komma-separiert für gum)
 echo "$SELECTED" | tr '\n' ',' | sed 's/,$//' >"$INDEX_FILE"
 
 # ==========================================
-# 4. Der Git-Upload (Interaktiv)
+# 5. Der Git-Upload (Interaktiv)
 # ==========================================
 echo ""
 if gum confirm "Möchtest du die aktuellen Änderungen jetzt auf GitHub hochladen?"; then
   COMMIT_MSG=$(gum input --placeholder "Commit-Nachricht eingeben..." --value "Update dotfiles")
 
-  # Verhindert, dass das Skript abbricht, wenn der Input leer ist
   if [ -n "$COMMIT_MSG" ]; then
     echo ""
     gum spin --spinner line --title "Lade zu GitHub hoch..." -- bash -c "
