@@ -108,3 +108,4 @@ alias zi=__zoxide_zi
 #   zoxide init fish | source
 
 alias sync="~/dotfiles/sync_dotfiles.sh --sync"
+alias vpn='tmux new -s vpn "sudo openvpn --config ~/.config/openvpn/uni_3.ovpn --auth-user-pass ~/.config/openvpn/pass.txt"'
