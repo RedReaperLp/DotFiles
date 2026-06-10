@@ -1,0 +1,17 @@
+version: "1"
+policy:
+  name: "custom-destructive-blocks"
+  description: "Blockiert gefaehrliche Systembefehle vor der Shell-Ausfuehrung"
+  
+  # Tirith sucht in Befehlsketten nach exakten Wortgruppen oder Teilstrings
+  blocklist:
+    - pattern: "rm -rf /"
+      severity: "CRITICAL"
+      message: "CRITICAL: Rekursives Loeschen des Root-Pfads wurde von Tirith blockiert!"
+    - pattern: "rm -rf /tmp"
+      severity: "HIGH"
+      message: "WARNING: Lokales Loeschen von System-Temporaerpfaden blockiert."
+    - pattern: "--no-preserve-root"
+      severity: "CRITICAL"
+      message: "CRITICAL: Gefaehrliches Override-Flag blockiert."
+
