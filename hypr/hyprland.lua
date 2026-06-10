@@ -32,7 +32,7 @@ hl.config({
 		gaps_out = 20,
 		border_size = 2,
 		-- Sichere 8-Zeichen rgba Hex-Codes für volle Deckkraft
-		["col.active_border"] = "rgba(aaaa00ff)",
+		["col.active_border"] = "rgba(ff0000ff)",
 		["col.inactive_border"] = "rgba(1a1a1aff)",
 		resize_on_border = false,
 		allow_tearing = false,
