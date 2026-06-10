@@ -70,11 +70,22 @@ install_packages() {
   local PKG_FILE="$1"
   local APP_NAME="$2"
 
+  # 1. Priorität: Gibt es eine manuelle packages.txt?
   if [ -f "$PKG_FILE" ]; then
     local REQUIRED=$(cat "$PKG_FILE" | tr '\n' ' ')
     if [ -n "$REQUIRED" ]; then
-      print_msg "[PKG] Installiere Pakete für $APP_NAME..." "$COLOR_INFO"
-      paru -S --needed --noconfirm $REQUIRED || print_msg "[ERR] Fehler bei Paketinstallation für $APP_NAME!" "$COLOR_WARNING"
+      print_msg "[PKG] Lese packages.txt für $APP_NAME..." "$COLOR_INFO"
+      paru -S --needed --noconfirm $REQUIRED || print_msg "[ERR] Fehler bei Paketinstallation (packages.txt)!" "$COLOR_WARNING"
+    fi
+  else
+    # 2. Priorität: Auto-Guessing (Gibt es ein Paket, das exakt wie der Ordner heißt?)
+    # Prüft leise, ob paru das Paket in den offiziellen Repos oder im AUR findet
+    if paru -Si "$APP_NAME" &>/dev/null; then
+      print_msg "[PKG] Auto-Detect: Installiere gleichnamiges Paket '$APP_NAME'..." "$COLOR_INFO"
+      paru -S --needed --noconfirm "$APP_NAME" || print_msg "[ERR] Auto-Detect Installation fehlgeschlagen für '$APP_NAME'!" "$COLOR_WARNING"
+    else
+      # Nur eine leise Info, falls der Ordner (z.B. "gtk-3.0") kein eigenständiges Paket ist
+      print_msg "[-] Kein direktes Paket für '$APP_NAME' gefunden. Überspringe Installation." "$COLOR_INFO"
     fi
   fi
 }
