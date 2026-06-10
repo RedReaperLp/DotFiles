@@ -18,13 +18,19 @@ COLOR_SUCCESS="46"
 COLOR_WARNING="214"
 COLOR_DANGER="196"
 COLOR_INFO="39"
+COLOR_MUTED="245"
 
+# Abhängigkeiten prüfen
 if ! command -v gum &>/dev/null; then
   echo "[ERR] 'gum' fehlt! (sudo pacman -S gum)"
   exit 1
 fi
 if ! command -v paru &>/dev/null; then
   echo "[ERR] 'paru' fehlt!"
+  exit 1
+fi
+if ! command -v expac &>/dev/null; then
+  echo "[ERR] 'expac' fehlt! (sudo pacman -S expac)"
   exit 1
 fi
 
@@ -59,7 +65,7 @@ create_backup() {
   local TIMESTAMP=$(date +%Y%m%d_%H%M%S)
   local BACKUP_PATH="$BACKUP_BASE_DIR/$TIMESTAMP"
   mkdir -p "$BACKUP_PATH"
-  print_msg "[SAVE] Erstelle System-Backup ($TIMESTAMP)..." "$COLOR_INFO"
+
   for dir in $(get_all_dirs); do
     [ -d "$CONFIG_DIR/$dir" ] && cp -r "$CONFIG_DIR/$dir" "$BACKUP_PATH/"
   done
@@ -76,46 +82,88 @@ restore_backup() {
   print_msg "[OK] Rollback abgeschlossen." "$COLOR_SUCCESS"
 }
 
+install_local_packages() {
+  local PKG_FILE="$1"
+  local APP_NAME="$2"
+
+  if [ -f "$PKG_FILE" ]; then
+    local REQUIRED=$(cat "$PKG_FILE" | tr '\n' ' ')
+    local MISSING_PKGS=""
+
+    for pkg in $REQUIRED; do
+      if ! pacman -Qq "$pkg" &>/dev/null; then
+        MISSING_PKGS="$MISSING_PKGS $pkg"
+      fi
+    done
+
+    if [ -n "$MISSING_PKGS" ]; then
+      print_msg "[PKG] Installiere fehlende Pakete für $APP_NAME:$MISSING_PKGS" "$COLOR_INFO"
+      paru -S --noconfirm $MISSING_PKGS || print_msg "[ERR] Fehler bei Installation für $APP_NAME!" "$COLOR_WARNING"
+    else
+      print_msg "[SKIP] Pakete für $APP_NAME sind bereits installiert." "$COLOR_MUTED"
+    fi
+  fi
+}
+
 apply_configs() {
   local SELECTED="$1"
   local ALL_DIRS=$(get_all_dirs)
+
+  print_msg "Sichere aktuellen Zustand..." "$COLOR_MUTED"
   local BACKUP_PATH=$(create_backup)
   echo ""
+
+  local CHANGES_MADE=false
 
   for dir in $ALL_DIRS; do
     local SOURCE_DIR="$DOTFILES_DIR/$dir"
     local TARGET_DIR="$CONFIG_DIR/$dir"
+    local PKG_FILE="$SOURCE_DIR/packages.txt"
 
     if echo "$SELECTED" | grep -q "^$dir$"; then
       if [ -L "$TARGET_DIR" ] && [ "$(readlink "$TARGET_DIR")" = "$SOURCE_DIR" ]; then
-        : # Bereits korrekt
+        print_msg "[SKIP] Bereits synchron: $dir" "$COLOR_MUTED"
       elif [ -d "$TARGET_DIR" ] && [ ! -d "$SOURCE_DIR" ]; then
-        print_msg "[+] Füge Ordner '$dir' zum Repo hinzu..." "$COLOR_PRIMARY"
+        print_msg "[+] Füge neuen Ordner '$dir' zum Git-Repo hinzu..." "$COLOR_PRIMARY"
         mv "$TARGET_DIR" "$SOURCE_DIR"
         ln -s "$SOURCE_DIR" "$TARGET_DIR"
+        CHANGES_MADE=true
       else
         print_msg "[LINK] Aktiviere Sync für: $dir" "$COLOR_SUCCESS"
         [ -d "$TARGET_DIR" ] && mv "$TARGET_DIR" "$TARGET_DIR.bak_$(date +%s)"
         ln -s "$SOURCE_DIR" "$TARGET_DIR"
+        CHANGES_MADE=true
       fi
-      # Lokale Hooks für die Config ausführen
-      [ -f "$SOURCE_DIR/post-sync.sh" ] && bash "$SOURCE_DIR/post-sync.sh"
+
+      install_local_packages "$PKG_FILE" "$dir"
+
+      if [ -f "$SOURCE_DIR/post-sync.sh" ]; then
+        print_msg "[HOOK] Führe Hook aus: $dir" "$COLOR_INFO"
+        bash "$SOURCE_DIR/post-sync.sh"
+      fi
     else
       if [ -L "$TARGET_DIR" ] && [ "$(readlink "$TARGET_DIR")" = "$SOURCE_DIR" ]; then
         print_msg "[UNLINK] Entkopple Sync für: $dir" "$COLOR_WARNING"
         rm "$TARGET_DIR"
         cp -r "$SOURCE_DIR" "$TARGET_DIR"
+        CHANGES_MADE=true
       fi
     fi
   done
 
   echo ""
-  if gum confirm "Configs angewendet! Klappt alles?"; then
+  if [ "$CHANGES_MADE" = true ]; then
+    if gum confirm "Configs angewendet! Klappt alles?"; then
+      mkdir -p "$STATE_DIR"
+      echo "$SELECTED" | tr '\n' ',' | sed 's/,$//' >"$INDEX_FILE"
+      print_msg "[OK] Neuer Config-Status gespeichert." "$COLOR_SUCCESS"
+    else
+      restore_backup "$BACKUP_PATH"
+    fi
+  else
     mkdir -p "$STATE_DIR"
     echo "$SELECTED" | tr '\n' ',' | sed 's/,$//' >"$INDEX_FILE"
-    print_msg "[OK] Config-Status gespeichert." "$COLOR_SUCCESS"
-  else
-    restore_backup "$BACKUP_PATH"
+    print_msg "[OK] Keine Änderungen an den Symlinks vorgenommen." "$COLOR_SUCCESS"
   fi
 }
 
@@ -136,22 +184,55 @@ interactive_configs() {
 apply_global_packages() {
   if [ -f "$GLOBAL_PKGS_FILE" ]; then
     local PKGS=$(cat "$GLOBAL_PKGS_FILE" | tr '\n' ' ')
-    if [ -n "$PKGS" ]; then
-      print_msg "[PKG] Synchronisiere globale Pakete..." "$COLOR_INFO"
-      paru -S --needed --noconfirm $PKGS || print_msg "[ERR] Fehler bei globaler Paketinstallation!" "$COLOR_WARNING"
+    local MISSING_PKGS=""
+
+    for pkg in $PKGS; do
+      if ! pacman -Qq "$pkg" &>/dev/null; then
+        MISSING_PKGS="$MISSING_PKGS $pkg"
+      fi
+    done
+
+    if [ -n "$MISSING_PKGS" ]; then
+      print_msg "[PKG] Installiere fehlende globale Pakete:$MISSING_PKGS" "$COLOR_INFO"
+      paru -S --noconfirm $MISSING_PKGS || print_msg "[ERR] Fehler bei globaler Paketinstallation!" "$COLOR_WARNING"
+    else
+      print_msg "[SKIP] Alle ausgewählten globalen Pakete sind installiert." "$COLOR_MUTED"
     fi
   fi
 }
 
 interactive_packages() {
-  print_msg "Lade installierte Pakete (das kann einen Moment dauern)..." "$COLOR_INFO"
+  # 1. Menü für die Sortierung
+  local SORT_MODE=$(gum choose \
+    "🔤 Alphabetisch (Standard)" \
+    "📅 Nach Datum (Neueste zuerst)" \
+    "💾 Nach Größe (Größte zuerst)" \
+    --header "Wie sollen die Pakete sortiert werden?" --height 6 --cursor.foreground "$COLOR_PRIMARY")
 
-  # Holt alle explizit installierten Pakete
-  local INSTALLED_PKGS=$(paru -Qqe)
+  [ $? -ne 0 ] && return
 
-  # Fügt Pakete aus der globalen Liste hinzu, falls sie auf DIESEM System gerade fehlen
+  print_msg "Lade und sortiere Pakete..." "$COLOR_MUTED"
+
+  # 2. Pakete mit expac sortieren
+  local INSTALLED_PKGS
+  case "$SORT_MODE" in
+  "📅 Nach Datum (Neueste zuerst)")
+    # %t = Timestamp, %n = Name
+    INSTALLED_PKGS=$(expac "%t %n" $(paru -Qqe) | sort -nr | awk '{print $2}')
+    ;;
+  "💾 Nach Größe (Größte zuerst)")
+    # %m = Installierte Größe, %n = Name
+    INSTALLED_PKGS=$(expac "%m %n" $(paru -Qqe) | sort -nr | awk '{print $2}')
+    ;;
+  *)
+    INSTALLED_PKGS=$(paru -Qqe | sort)
+    ;;
+  esac
+
+  # 3. Pakete anhängen, die im Repo stehen, aber lokal fehlen (damit sie nicht verloren gehen)
   if [ -f "$GLOBAL_PKGS_FILE" ]; then
-    INSTALLED_PKGS=$(echo -e "$INSTALLED_PKGS\n$(cat "$GLOBAL_PKGS_FILE")" | sort -u | grep -v '^\s*$')
+    # awk entfernt Duplikate, behält aber die Sortier-Reihenfolge der ersten Einträge bei
+    INSTALLED_PKGS=$(echo -e "$INSTALLED_PKGS\n$(cat "$GLOBAL_PKGS_FILE")" | awk '!seen[$0]++' | grep -v '^\s*$')
   fi
 
   local PREV_PKGS=""
@@ -164,12 +245,9 @@ interactive_packages() {
 
   if [ $? -eq 0 ]; then
     echo "$SELECTED_PKGS" >"$GLOBAL_PKGS_FILE"
-    print_msg "[OK] Globale Paketliste im Git-Repo gespeichert." "$COLOR_SUCCESS"
-
+    print_msg "[OK] Globale Paketliste gespeichert." "$COLOR_SUCCESS"
     echo ""
-    if gum confirm "Sollen fehlende Pakete jetzt installiert werden?"; then
-      apply_global_packages
-    fi
+    apply_global_packages
   fi
 }
 
@@ -185,7 +263,7 @@ pull_configs() {
 push_configs() {
   echo ""
   if gum confirm "Änderungen hochladen?"; then
-    local COMMIT_MSG=$(gum input --placeholder "Commit-Nachricht..." --value "Update sync state")
+    local COMMIT_MSG=$(gum input --placeholder "Commit-Nachricht..." --value "Update configs & packages")
     if [ -n "$COMMIT_MSG" ]; then
       print_msg "[UP] Lade zu GitHub hoch..." "$COLOR_INFO"
       cd "$DOTFILES_DIR" && git add . && git commit -m "$COMMIT_MSG" && git push
@@ -200,9 +278,7 @@ push_configs() {
 if [[ "$1" == "--sync" ]]; then
   check_dirty_repo
   pull_configs
-  # 1. Pakete installieren
   apply_global_packages
-  # 2. Configs verlinken
   [ -f "$INDEX_FILE" ] && apply_configs "$(cat "$INDEX_FILE" | tr ',' '\n')" || interactive_configs
   push_configs
   exit 0
