@@ -1,9 +1,9 @@
 appearance = "dark"
 theme = "tokyo-night"
-refresh_ms = 2000
+refresh_ms = 1000
 show_graph = true
 graph_metric = "merged"
-process_count = 100
+process_count = 50
 energy_threshold = 0.5
 merge_mode = true
 transparent_background = true
