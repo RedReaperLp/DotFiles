@@ -95,7 +95,7 @@ hl.config({
 
 	dwindle = { preserve_split = true },
 	master = { new_status = "master" },
-	misc = { force_default_wallpaper = -1, disable_hyprland_logo = false },
+	misc = { force_default_wallpaper = -1, disable_hyprland_logo = false, vrr = 1 },
 
 	input = {
 		kb_layout = "de",
@@ -191,10 +191,6 @@ for i = 1, 10 do
 	hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
 	hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
-
--- Example special workspace (scratchpad)
-hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
 
 -- Scroll through existing workspaces with mainMod + scroll
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
