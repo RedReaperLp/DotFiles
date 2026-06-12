@@ -103,6 +103,10 @@ hl.config({
 		sensitivity = 0,
 		touchpad = { natural_scroll = true },
 	},
+
+	xwayland = {
+		force_zero_scaling = true,
+	},
 }) -- HIER ENDET hl.config()
 
 -- #######################################################################################
