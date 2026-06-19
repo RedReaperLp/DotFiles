@@ -13,45 +13,89 @@ local screenshotMenu = "~/.config/rofi/applets/bin/screenshot.sh"
 --------------------------------------------------
 
 local current_row = 0
+local current_col = 1 -- Speichert die "Position" innerhalb der Zeile
 local workspaces_per_row = 5
+local max_rows = 6
 
--- 1. Mapping der Corsair G-Keys auf die exakten Hardware-Events (Zeilen 0 bis 5)
+-- Funktion: Vertikaler Sprung (Zeilenwechsel)
+local function jump_to_row(new_row)
+	-- Wrap-around: Von Zeile 6 nach unten springt zu Zeile 1 und umgekehrt
+	if new_row < 0 then
+		new_row = max_rows - 1
+	end
+	if new_row >= max_rows then
+		new_row = 0
+	end
+
+	current_row = new_row
+	local target = (current_row * workspaces_per_row) + current_col
+
+	-- 1. Animation dynamisch auf vertikal stellen
+	hl.dispatch(hl.dsp.exec_cmd("hyprctl keyword animation 'workspaces, 1, 4, default, slidevert'"))
+
+	-- 2. Zum Ziel-Workspace springen (direkt unter/über dem aktuellen)
+	hl.dispatch(hl.dsp.focus({ workspace = target }))
+
+	-- 3. Kurzes Feedback
+	hl.dispatch(hl.dsp.exec_cmd("notify-send 'Zeile " .. (current_row + 1) .. " aktiv' -t 400"))
+end
+
+-- Funktion: Horizontaler Sprung (Spaltenwechsel innerhalb der Zeile)
+local function jump_to_col(new_col, is_move)
+	current_col = new_col
+	local target = (current_row * workspaces_per_row) + current_col
+
+	-- Animation dynamisch zurück auf horizontal stellen
+	hl.dispatch(hl.dsp.exec_cmd("hyprctl keyword animation 'workspaces, 1, 4, default, slide'"))
+
+	if is_move then
+		hl.dispatch(hl.dsp.window.move({ workspace = target }))
+	else
+		hl.dispatch(hl.dsp.focus({ workspace = target }))
+	end
+end
+
+-- 1. Mapping der Corsair G-Keys (Direkter Zeilensprung)
 local g_key_map = {
-	["XF86Tools"] = 0, -- G1 -> Zeile 1
-	["XF86Launch5"] = 1, -- G2 -> Zeile 2
-	["XF86Launch6"] = 2, -- G3 -> Zeile 3
-	["XF86Launch7"] = 3, -- G4 -> Zeile 4
-	["XF86Launch8"] = 4, -- G5 -> Zeile 5
-	["XF86Launch9"] = 5, -- G6 -> Zeile 6
+	["XF86Tools"] = 0, -- G1
+	["XF86Launch5"] = 1, -- G2
+	["XF86Launch6"] = 2, -- G3
+	["XF86Launch7"] = 3, -- G4
+	["XF86Launch8"] = 4, -- G5
+	["XF86Launch9"] = 5, -- G6
 }
 
--- 2. Zeilen-Switching via G-Tasten
 for key, row_idx in pairs(g_key_map) do
 	hl.bind(key, function()
-		current_row = row_idx
-		-- hl.dispatch führt das erstellte Dispatcher-Objekt (notify-send) aktiv aus
-		hl.dispatch(hl.dsp.exec_cmd("notify-send 'Zeile " .. (row_idx + 1) .. " aktiv' -t 500"))
+		jump_to_row(row_idx)
 	end)
 end
+
+-- 2. Up / Down für relative Zeilensprünge
+-- HINWEIS: Ersetze deine alten Binds für Fenster-Fokus ("SUPER + up/down"),
+-- falls du sie mit diesen hier überschreiben möchtest.
+hl.bind(mainMod .. " + up", function()
+	-- Hyprland ID-Logik: ID wird kleiner = Slide nach oben
+	jump_to_row(current_row - 1)
+end)
+
+hl.bind(mainMod .. " + down", function()
+	-- Hyprland ID-Logik: ID wird größer = Slide nach unten
+	jump_to_row(current_row + 1)
+end)
 
 -- 3. Workspace-Navigation (SUPER + Ziffer)
 for i = 1, 5 do
 	local key = tostring(i)
 
-	-- Springen (Fokus auf berechneten Workspace)
+	-- Springen (Horizontal)
 	hl.bind(mainMod .. " + " .. key, function()
-		local target = (current_row * workspaces_per_row) + i
-
-		-- Laut Doku: hl.dsp.focus() generiert die Tabelle, hl.dispatch() führt sie aus
-		hl.dispatch(hl.dsp.focus({ workspace = target }))
+		jump_to_col(i, false)
 	end)
 
-	-- Fenster Verschieben (Move active window to workspace)
+	-- Fenster Verschieben (Horizontal)
 	hl.bind(mainMod .. " + SHIFT + " .. key, function()
-		local target = (current_row * workspaces_per_row) + i
-
-		-- Laut Doku: hl.dsp.window.move() generiert die Tabelle, hl.dispatch() führt sie aus
-		hl.dispatch(hl.dsp.window.move({ workspace = target }))
+		jump_to_col(i, true)
 	end)
 end
 
