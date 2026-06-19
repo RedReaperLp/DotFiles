@@ -8,6 +8,57 @@ local menu = "~/.config/rofi/launchers/type-6/launcher.sh"
 local powerMenu = "~/.config/rofi/powermenu/type-5/powermenu.sh"
 local screenshotMenu = "~/.config/rofi/applets/bin/screenshot.sh"
 
+--------------------------------------------------
+-- HYPRLAND MATRIX NAVIGATION
+--------------------------------------------------
+
+local current_row = 0
+local workspaces_per_row = 5
+
+-- 1. Mapping der Corsair G-Keys auf die exakten Hardware-Events (Zeilen 0 bis 5)
+local g_key_map = {
+	["XF86Tools"] = 0, -- G1 -> Zeile 1
+	["XF86Launch5"] = 1, -- G2 -> Zeile 2
+	["XF86Launch6"] = 2, -- G3 -> Zeile 3
+	["XF86Launch7"] = 3, -- G4 -> Zeile 4
+	["XF86Launch8"] = 4, -- G5 -> Zeile 5
+	["XF86Launch9"] = 5, -- G6 -> Zeile 6
+}
+
+-- 2. Zeilen-Switching via G-Tasten
+for key, row_idx in pairs(g_key_map) do
+	hl.bind(key, function()
+		current_row = row_idx
+		-- hl.dispatch führt das erstellte Dispatcher-Objekt (notify-send) aktiv aus
+		hl.dispatch(hl.dsp.exec_cmd("notify-send 'Zeile " .. (row_idx + 1) .. " aktiv' -t 500"))
+	end)
+end
+
+-- 3. Workspace-Navigation (SUPER + Ziffer)
+for i = 1, 5 do
+	local key = tostring(i)
+
+	-- Springen (Fokus auf berechneten Workspace)
+	hl.bind(mainMod .. " + " .. key, function()
+		local target = (current_row * workspaces_per_row) + i
+
+		-- Laut Doku: hl.dsp.focus() generiert die Tabelle, hl.dispatch() führt sie aus
+		hl.dispatch(hl.dsp.focus({ workspace = target }))
+	end)
+
+	-- Fenster Verschieben (Move active window to workspace)
+	hl.bind(mainMod .. " + SHIFT + " .. key, function()
+		local target = (current_row * workspaces_per_row) + i
+
+		-- Laut Doku: hl.dsp.window.move() generiert die Tabelle, hl.dispatch() führt sie aus
+		hl.dispatch(hl.dsp.window.move({ workspace = target }))
+	end)
+end
+
+--------------------------------------------------
+-- HYPRLAND MATRIX NAVIGATION --- END
+--------------------------------------------------
+
 -- 1. Lokale machine.lua laden
 local has_machine, machine = pcall(require, "machine")
 if not has_machine then
@@ -207,11 +258,11 @@ hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }))
 
 -- Workspaces
-for i = 1, 10 do
-	local key = i % 10 -- 10 maps to key 0
-	hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
-	hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
-end
+-- for i = 1, 10 do
+-- local key = i % 10 -- 10 maps to key 0
+-- hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
+-- hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
+-- end
 
 -- Scroll through existing workspaces with mainMod + scroll
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
