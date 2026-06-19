@@ -170,7 +170,8 @@ apply_global_packages() {
 
     if [ -n "$MISSING_PKGS" ]; then
       print_msg "[PKG] Installiere fehlende globale Pakete:$MISSING_PKGS" "$COLOR_INFO"
-      paru -S --needed --noconfirm $MISSING_PKGS || print_msg "[ERR] Fehler bei globaler Paketinstallation!" "$COLOR_WARNING"
+      # --noconfirm entfernt, damit paru pausiert und Diffs/Bestätigung anzeigt
+      paru -S --needed $MISSING_PKGS || print_msg "[ERR] Fehler bei globaler Paketinstallation!" "$COLOR_WARNING"
     else
       print_msg "[SKIP] Alle System-Pakete sind bereits installiert." "$COLOR_MUTED"
     fi

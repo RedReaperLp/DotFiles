@@ -1,5 +1,5 @@
 appearance = "dark"
-theme = "tokyo-night"
+theme = "solarized"
 refresh_ms = 1000
 show_graph = true
 graph_metric = "merged"
