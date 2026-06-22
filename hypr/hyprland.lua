@@ -330,3 +330,27 @@ hl.exec_cmd("hyprctl keyword bindl , XF86AudioPause, exec, playerctl play-pause"
 hl.exec_cmd("hyprctl keyword bindl , XF86AudioPlay, exec, playerctl play-pause")
 hl.exec_cmd("hyprctl keyword bindl , XF86AudioPrev, exec, playerctl previous")
 hl.bind("Print", hl.dsp.exec_cmd('grim -g "$(slurp)" - | swappy -f -'))
+
+-- Philips Monitor (Links, Hauptbildschirm)
+hl.monitor({
+	output = "desc:Philips Consumer Electronics Company PHL 322E1 0x00001FAE",
+	mode = "1920x1080@60",
+	position = "0x0",
+	scale = 1,
+})
+
+-- Lenovo Laptop (Rechts)
+hl.monitor({
+	output = "desc:Lenovo Group Limited 0x403A",
+	mode = "1920x1200@60",
+	position = "1920x538",
+	scale = 1.5,
+})
+
+-- Fallback-Regel (für alle anderen Monitore, die du evtl. mal ansteckst)
+hl.monitor({
+	output = "",
+	mode = "preferred",
+	position = "auto",
+	scale = 1,
+})
