@@ -1,6 +1,6 @@
 appearance = "dark"
 theme = "solarized"
-refresh_ms = 1000
+refresh_ms = 500
 show_graph = true
 graph_metric = "merged"
 process_count = 50
