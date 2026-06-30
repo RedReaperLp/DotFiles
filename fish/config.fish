@@ -111,4 +111,4 @@ alias sync="~/dotfiles/sync_dotfiles.sh --sync"
 alias vpn='tmux new -s vpn "sudo openvpn --config ~/.config/openvpn/uni_3.ovpn --auth-user-pass ~/.config/openvpn/pass.txt"'
 alias cmod='chmod +x '
 alias DebugTunnel="ssh -i ~/.ssh/5_9_23_72_linux -L 5005:localhost:5005 root@direct.redreaperlp.de"
-alias vps="ssh -i ~/.ssh/5_9_23_72_linux root@direct.redreaperlp.de"
+alias vps="kitten ssh -i ~/.ssh/5_9_23_72_linux root@direct.redreaperlp.de"
