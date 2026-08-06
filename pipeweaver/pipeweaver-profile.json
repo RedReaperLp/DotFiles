@@ -1,0 +1,270 @@
+{
+  "devices": {
+    "sources": {
+      "physical_devices": [
+        {
+          "description": {
+            "id": "01KZC6XN0CRMMZBHQCXP78FYWC",
+            "name": "Microphone",
+            "colour": {
+              "red": 47,
+              "green": 24,
+              "blue": 71
+            }
+          },
+          "mute_states": {
+            "mute_state": [],
+            "mute_targets": {
+              "TargetA": [],
+              "TargetB": []
+            }
+          },
+          "volumes": {
+            "volume": {
+              "A": 100,
+              "B": 100
+            },
+            "volumes_linked": 1.0
+          },
+          "attached_devices": [
+            {
+              "name": "alsa_input.usb-MUSIC-BOOST_Trust_GXT_232_Microphone-00.mono-fallback",
+              "description": "Trust GXT 232 Microphone Mono"
+            }
+          ],
+          "attached_port_maps": []
+        }
+      ],
+      "virtual_devices": [
+        {
+          "description": {
+            "id": "01KZC6XN0C1PT3YRNF8RF040QA",
+            "name": "System",
+            "colour": {
+              "red": 255,
+              "green": 0,
+              "blue": 9
+            }
+          },
+          "mute_states": {
+            "mute_state": [],
+            "mute_targets": {
+              "TargetA": [],
+              "TargetB": []
+            }
+          },
+          "volumes": {
+            "volume": {
+              "A": 100,
+              "B": 100
+            },
+            "volumes_linked": 1.0
+          }
+        },
+        {
+          "description": {
+            "id": "01KZC6XN0CZAKTFG07EAXSJRWW",
+            "name": "Browser",
+            "colour": {
+              "red": 255,
+              "green": 205,
+              "blue": 1
+            }
+          },
+          "mute_states": {
+            "mute_state": [],
+            "mute_targets": {
+              "TargetA": [],
+              "TargetB": []
+            }
+          },
+          "volumes": {
+            "volume": {
+              "A": 50,
+              "B": 50
+            },
+            "volumes_linked": 1.0
+          }
+        },
+        {
+          "description": {
+            "id": "01KZC8Z7CEF3QTY90YBEVZBMYK",
+            "name": "Music",
+            "colour": {
+              "red": 170,
+              "green": 51,
+              "blue": 170
+            }
+          },
+          "mute_states": {
+            "mute_state": [],
+            "mute_targets": {
+              "TargetA": [],
+              "TargetB": []
+            }
+          },
+          "volumes": {
+            "volume": {
+              "A": 70,
+              "B": 70
+            },
+            "volumes_linked": 1.0
+          }
+        },
+        {
+          "description": {
+            "id": "01KZC90XH45FP62N8H2Y87MMJS",
+            "name": "Game",
+            "colour": {
+              "red": 15,
+              "green": 224,
+              "blue": 255
+            }
+          },
+          "mute_states": {
+            "mute_state": [],
+            "mute_targets": {
+              "TargetA": [],
+              "TargetB": []
+            }
+          },
+          "volumes": {
+            "volume": {
+              "A": 100,
+              "B": 100
+            },
+            "volumes_linked": 1.0
+          }
+        }
+      ],
+      "device_order": {
+        "Default": [
+          "01KZC6XN0C1PT3YRNF8RF040QA",
+          "01KZC90XH45FP62N8H2Y87MMJS",
+          "01KZC6XN0CZAKTFG07EAXSJRWW",
+          "01KZC8Z7CEF3QTY90YBEVZBMYK"
+        ],
+        "Pinned": [
+          "01KZC6XN0CRMMZBHQCXP78FYWC"
+        ],
+        "Hidden": []
+      }
+    },
+    "targets": {
+      "physical_devices": [
+        {
+          "description": {
+            "id": "01KZC6XN0CW0V2JD2JPKH5X49E",
+            "name": "Headphones",
+            "colour": {
+              "red": 7,
+              "green": 0,
+              "blue": 255
+            }
+          },
+          "mute_state": "Muted",
+          "volume": 100,
+          "mix": "A",
+          "attached_devices": [
+            {
+              "name": "alsa_output.usb-Logitech_G935_Gaming_Headset-00.analog-stereo",
+              "description": "G935 Gaming Headset Analoges Stereo"
+            }
+          ],
+          "attached_port_maps": []
+        },
+        {
+          "description": {
+            "id": "01KZC86HKEYS9A2CTCM5SHB0GJ",
+            "name": "Speakers",
+            "colour": {
+              "red": 255,
+              "green": 0,
+              "blue": 1
+            }
+          },
+          "mute_state": "Unmuted",
+          "volume": 100,
+          "mix": "A",
+          "attached_devices": [
+            {
+              "name": "alsa_output.pci-0000_0e_00.4.analog-stereo",
+              "description": "Starship/Matisse HD Audio Controller Analoges Stereo"
+            }
+          ],
+          "attached_port_maps": []
+        }
+      ],
+      "virtual_devices": [
+        {
+          "description": {
+            "id": "01KZC6XN0C8HT7DP0Y6X7WS064",
+            "name": "Chat Mic",
+            "colour": {
+              "red": 11,
+              "green": 37,
+              "blue": 69
+            }
+          },
+          "mute_state": "Unmuted",
+          "volume": 100,
+          "mix": "A",
+          "attached_devices": [],
+          "attached_port_maps": []
+        }
+      ],
+      "device_order": {
+        "Default": [
+          "01KZC86HKEYS9A2CTCM5SHB0GJ",
+          "01KZC6XN0CW0V2JD2JPKH5X49E",
+          "01KZC6XN0C8HT7DP0Y6X7WS064"
+        ],
+        "Pinned": [],
+        "Hidden": []
+      }
+    },
+    "physical_device_port_maps": {
+      "Source": [],
+      "Target": []
+    }
+  },
+  "routes": {
+    "01KZC6XN0CRMMZBHQCXP78FYWC": [
+      "01KZC6XN0C8HT7DP0Y6X7WS064"
+    ],
+    "01KZC8Z7CEF3QTY90YBEVZBMYK": [
+      "01KZC86HKEYS9A2CTCM5SHB0GJ",
+      "01KZC6XN0CW0V2JD2JPKH5X49E"
+    ],
+    "01KZC90XH45FP62N8H2Y87MMJS": [
+      "01KZC86HKEYS9A2CTCM5SHB0GJ",
+      "01KZC6XN0CW0V2JD2JPKH5X49E"
+    ],
+    "01KZC6XN0C1PT3YRNF8RF040QA": [
+      "01KZC6XN0CW0V2JD2JPKH5X49E",
+      "01KZC86HKEYS9A2CTCM5SHB0GJ"
+    ],
+    "01KZC6XN0CZAKTFG07EAXSJRWW": [
+      "01KZC6XN0CW0V2JD2JPKH5X49E",
+      "01KZC86HKEYS9A2CTCM5SHB0GJ"
+    ]
+  },
+  "audio_quantum": "Quantum2048",
+  "application_mapping": {
+    "Source": {
+      "spotify": {
+        "Spotify": "01KZC8Z7CEF3QTY90YBEVZBMYK"
+      },
+      "firefox": {
+        "Firefox": "01KZC6XN0CZAKTFG07EAXSJRWW"
+      },
+      "chrome": {
+        "Google Chrome": "01KZC6XN0CZAKTFG07EAXSJRWW"
+      },
+      "chromium": {
+        "Chromium": "01KZC6XN0CZAKTFG07EAXSJRWW"
+      }
+    },
+    "Target": {}
+  }
+}
