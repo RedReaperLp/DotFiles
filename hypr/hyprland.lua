@@ -286,6 +286,9 @@ hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 
+hl.bind(mainMod .. " + U", hl.dsp.window.move({ workspace = "special:magic" }))
+hl.bind(mainMod .. " + I", hl.dsp.workspace.toggle_special("magic"))
+
 -- Headless Script
 hl.bind(
 	mainMod .. " + R",
