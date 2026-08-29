@@ -1,0 +1,41 @@
+max-visible=3
+sort=-time
+layer=overlay
+
+# --- Minecraft Achievement Box Styling ---
+# Hintergrund: Das typische, sehr dunkle Grau-Braun der UI-Boxen
+background-color=#212121FA
+
+# Rahmen: Der typische helle Sandstein/Grau-Ton der Achievement-Boxen
+border-size=3
+border-color=#C6C6C6
+border-radius=0
+
+# Text-Formatierung
+font=Minecraft 11
+width=320
+height=90
+padding=12
+margin=20
+
+# Textfarben: Titel im typischen Gold/Gelb, Body in Weiß
+text-color=#FFFFFF
+# Wir erzwingen über Pango-Markup in den Mako-Klassen das Minecraft-Gelb für Titel
+format=<b><span foreground='#FFFF55'>%s</span></b>\n%b
+
+# --- Fortschrittsbalken ---
+progress-color=source #55FF55
+
+# --- Dringlichkeits-Klassen analog zu Minecraft-Typen ---
+
+# Standard (Task / Normaler Erfolg) -> Grüner Text im Body
+[urgency=low]
+border-color=#A0A0A0
+format=<b><span foreground='#FFFF55'>Erfolg erzielt!</span></b>\n<span foreground='#55FF55'>%s</span>: %b
+
+# Wichtig (Challenge / Herausforderung) -> Lila Rahmen & Lila Text
+[urgency=high]
+border-color=#AA00AA
+format=<b><span foreground='#FF55FF'>Herausforderung abgeschlossen!</span></b>\n%s\n<span foreground='#7F7F7F'>%b</span>
+default-timeout=0
+

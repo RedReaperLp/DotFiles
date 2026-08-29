@@ -36,8 +36,10 @@ local function jump_to_row(new_row)
 	-- 2. Zum Ziel-Workspace springen (direkt unter/über dem aktuellen)
 	hl.dispatch(hl.dsp.focus({ workspace = target }))
 
-	-- 3. Kurzes Feedback
+	-- 3. Kurzes Feedback & Signal für Waybar Zeilenanzeige & Workspaces
 	hl.dispatch(hl.dsp.exec_cmd("notify-send 'Zeile " .. (current_row + 1) .. " aktiv' -t 400"))
+	hl.dispatch(hl.dsp.exec_cmd("pkill -RTMIN+2 waybar"))
+	hl.dispatch(hl.dsp.exec_cmd("pkill -RTMIN+1 waybar"))
 end
 
 -- Funktion: Horizontaler Sprung (Spaltenwechsel innerhalb der Zeile)
@@ -53,6 +55,9 @@ local function jump_to_col(new_col, is_move)
 	else
 		hl.dispatch(hl.dsp.focus({ workspace = target }))
 	end
+
+	-- Signal für Waybar Workspaces
+	hl.dispatch(hl.dsp.exec_cmd("pkill -RTMIN+1 waybar"))
 end
 
 -- 1. Mapping der Corsair G-Keys (Direkter Zeilensprung)
@@ -141,9 +146,9 @@ hl.config({
 		gaps_in = 5,
 		gaps_out = 20,
 		border_size = 2,
-		-- Sichere 8-Zeichen rgba Hex-Codes für volle Deckkraft
-		["col.active_border"] = "rgba(ff0000ff)",
-		["col.inactive_border"] = "rgba(1a1a1aff)",
+		-- Sichere 8-Zeichen rgba Hex-Codes für Osaka Jade Theme
+		["col.active_border"] = "rgba(509475ff)",
+		["col.inactive_border"] = "rgba(111c18ff)",
 		resize_on_border = false,
 		allow_tearing = false,
 		layout = "dwindle",
@@ -332,8 +337,8 @@ hl.bind(
 )
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { locked = true })
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"), { repeating = true, locked = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"), { repeating = true, locked = true })
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("/home/raphaelk/.config/hypr/scripts/change_brightness.sh up 5"), { repeating = true, locked = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("/home/raphaelk/.config/hypr/scripts/change_brightness.sh down 5"), { repeating = true, locked = true })
 
 -- 6. Playerctl & Screenshot (Echt Nativ)
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })

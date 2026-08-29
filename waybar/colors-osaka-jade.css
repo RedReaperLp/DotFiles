@@ -1,0 +1,15 @@
+@define-color background       #111c18;
+@define-color foreground       #C1C497;
+@define-color accent           #509475;
+@define-color surface          rgba(35, 55, 43, 0.45);
+@define-color border-color     rgba(80, 148, 117, 0.3);
+@define-color border-hover     rgba(80, 148, 117, 0.6);
+@define-color text-light       #F6F5DD;
+
+/* Accent colors for modules */
+@define-color red              #FF5345;
+@define-color green            #549e6a;
+@define-color yellow           #E5C736;
+@define-color teal             #2DD5B7;
+@define-color light-teal       #ACD4CF;
+@define-color magenta          #D2689C;
