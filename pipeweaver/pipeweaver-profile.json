@@ -207,7 +207,7 @@
             }
           },
           "mute_state": "Unmuted",
-          "volume": 45,
+          "volume": 100,
           "mix": "A",
           "attached_devices": [],
           "attached_port_maps": []
@@ -264,6 +264,9 @@
       "wine-preloader": {
         "Captain of Industry.exe": "01KZC90XH45FP62N8H2Y87MMJS",
         "WWZ": "01KZC90XH45FP62N8H2Y87MMJS"
+      },
+      "vesktop": {
+        "Chromium": "01KZC6XN0CZAKTFG07EAXSJRWW"
       },
       "chromium": {
         "Chromium": "01KZC6XN0CZAKTFG07EAXSJRWW"
