@@ -55,8 +55,8 @@
           },
           "volumes": {
             "volume": {
-              "A": 100,
-              "B": 100
+              "A": 90,
+              "B": 90
             },
             "volumes_linked": 1.0
           }
@@ -80,8 +80,8 @@
           },
           "volumes": {
             "volume": {
-              "A": 50,
-              "B": 50
+              "A": 70,
+              "B": 70
             },
             "volumes_linked": 1.0
           }
@@ -105,8 +105,8 @@
           },
           "volumes": {
             "volume": {
-              "A": 70,
-              "B": 70
+              "A": 30,
+              "B": 30
             },
             "volumes_linked": 1.0
           }
@@ -130,8 +130,8 @@
           },
           "volumes": {
             "volume": {
-              "A": 85,
-              "B": 85
+              "A": 50,
+              "B": 50
             },
             "volumes_linked": 1.0
           }
@@ -162,7 +162,7 @@
               "blue": 255
             }
           },
-          "mute_state": "Unmuted",
+          "mute_state": "Muted",
           "volume": 100,
           "mix": "A",
           "attached_devices": [
@@ -183,7 +183,7 @@
               "blue": 1
             }
           },
-          "mute_state": "Muted",
+          "mute_state": "Unmuted",
           "volume": 100,
           "mix": "A",
           "attached_devices": [
@@ -207,7 +207,7 @@
             }
           },
           "mute_state": "Unmuted",
-          "volume": 70,
+          "volume": 45,
           "mix": "A",
           "attached_devices": [],
           "attached_port_maps": []
@@ -229,24 +229,24 @@
     }
   },
   "routes": {
-    "01KZC6XN0C1PT3YRNF8RF040QA": [
-      "01KZC6XN0CW0V2JD2JPKH5X49E",
-      "01KZC86HKEYS9A2CTCM5SHB0GJ"
-    ],
     "01KZC90XH45FP62N8H2Y87MMJS": [
       "01KZC6XN0CW0V2JD2JPKH5X49E",
       "01KZC86HKEYS9A2CTCM5SHB0GJ"
     ],
     "01KZC8Z7CEF3QTY90YBEVZBMYK": [
-      "01KZC86HKEYS9A2CTCM5SHB0GJ",
-      "01KZC6XN0CW0V2JD2JPKH5X49E"
+      "01KZC6XN0CW0V2JD2JPKH5X49E",
+      "01KZC86HKEYS9A2CTCM5SHB0GJ"
+    ],
+    "01KZC6XN0CZAKTFG07EAXSJRWW": [
+      "01KZC6XN0CW0V2JD2JPKH5X49E",
+      "01KZC86HKEYS9A2CTCM5SHB0GJ"
     ],
     "01KZC6XN0CRMMZBHQCXP78FYWC": [
       "01KZC6XN0C8HT7DP0Y6X7WS064"
     ],
-    "01KZC6XN0CZAKTFG07EAXSJRWW": [
-      "01KZC86HKEYS9A2CTCM5SHB0GJ",
-      "01KZC6XN0CW0V2JD2JPKH5X49E"
+    "01KZC6XN0C1PT3YRNF8RF040QA": [
+      "01KZC6XN0CW0V2JD2JPKH5X49E",
+      "01KZC86HKEYS9A2CTCM5SHB0GJ"
     ]
   },
   "audio_quantum": "Quantum2048",
@@ -258,16 +258,24 @@
       "firefox": {
         "Firefox": "01KZC6XN0CZAKTFG07EAXSJRWW"
       },
-      "spotify": {
-        "Spotify": "01KZC8Z7CEF3QTY90YBEVZBMYK"
+      "chrome": {
+        "Google Chrome": "01KZC6XN0CZAKTFG07EAXSJRWW"
+      },
+      "wine-preloader": {
+        "Captain of Industry.exe": "01KZC90XH45FP62N8H2Y87MMJS",
+        "WWZ": "01KZC90XH45FP62N8H2Y87MMJS"
       },
       "chromium": {
         "Chromium": "01KZC6XN0CZAKTFG07EAXSJRWW"
       },
-      "chrome": {
-        "Google Chrome": "01KZC6XN0CZAKTFG07EAXSJRWW"
+      "spotify": {
+        "Spotify": "01KZC8Z7CEF3QTY90YBEVZBMYK"
       }
     },
-    "Target": {}
+    "Target": {
+      "wine-preloader": {
+        "PEAK.exe": "01KZC6XN0C8HT7DP0Y6X7WS064"
+      }
+    }
   }
 }

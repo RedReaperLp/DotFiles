@@ -1,0 +1,87 @@
+/*****----- Bluetooth Popup Theme -----*****/
+configuration {
+    show-icons: false;
+}
+
+* {
+    font: "JetBrainsMono Nerd Font Medium 11";
+    background-color: transparent;
+    text-color: #F6F5DD;
+}
+
+window {
+    transparency: "real";
+    location: northeast;
+    anchor: northeast;
+    x-offset: -100px;
+    y-offset: 38px;
+    width: 440px;
+    margin: 0px;
+    padding: 0px;
+    border: 2px;
+    border-radius: 16px;
+    border-color: rgba(80, 148, 117, 0.5);
+    background-color: rgba(17, 28, 24, 0.96);
+    children: [ mainbox ];
+}
+
+mainbox {
+    spacing: 10px;
+    margin: 0px;
+    padding: 16px;
+    background-color: transparent;
+    children: [ inputbar, listview ];
+}
+
+inputbar {
+    spacing: 0px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background-color: rgba(35, 55, 43, 0.6);
+    text-color: #2DD5B7;
+    children: [ prompt ];
+}
+
+prompt {
+    background-color: transparent;
+    text-color: #2DD5B7;
+    font: "JetBrainsMono Nerd Font Bold 12";
+}
+
+listview {
+    enabled: true;
+    columns: 1;
+    lines: 7;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+    layout: vertical;
+    reverse: false;
+    fixed-height: false;
+    fixed-columns: true;
+    spacing: 4px;
+    background-color: transparent;
+}
+
+element {
+    enabled: true;
+    spacing: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background-color: transparent;
+    text-color: #C1C497;
+    cursor: pointer;
+}
+
+element selected.normal {
+    background-color: rgba(80, 148, 117, 0.35);
+    text-color: #F6F5DD;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    cursor: inherit;
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+}

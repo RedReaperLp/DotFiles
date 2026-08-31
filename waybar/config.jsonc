@@ -13,7 +13,7 @@
     "pulseaudio",
     "power-profiles-daemon",
     "cpu",
-    "battery"
+    "custom/device-batteries"
   ],
   "group/workspaces": {
     "orientation": "horizontal",
@@ -73,11 +73,12 @@
     "tooltip-format": "Application Menu\n\nALT + Space"
   },
   "mpris": {
-    "format": " {dynamic}",
-    "format-paused": "  {dynamic}",
-    "format-disabled": "",
-    "interval": 5,
-    "max-length": 35,
+    "format": "󰎈 <span foreground='#2DD5B7'>{artist}</span> - <span foreground='#F6F5DD'>{title}</span>",
+    "format-paused": "󰏤 <span foreground='#C1C497'>{artist} - {title}</span>",
+    "format-stopped": "",
+    "interval": 1,
+    "max-length": 40,
+    "on-click": "python3 /home/raphaelk/dotfiles/waybar/scripts/rofi_media.py",
     "dynamic-order": [
       "artist",
       "title"
@@ -146,6 +147,11 @@
       "critical": 10
     }
   },
+  "custom/device-batteries": {
+    "exec": "python3 /home/raphaelk/dotfiles/waybar/scripts/device_batteries.py",
+    "return-type": "json",
+    "interval": 3
+  },
   "bluetooth": {
     "format": "",
     "format-off": "󰂲",
@@ -153,7 +159,8 @@
     "format-connected": "󰂱",
     "format-no-controller": "",
     "tooltip-format": "Devices connected: {num_connections}",
-    "on-click": "blueman-manager"
+    "on-click": "python3 /home/raphaelk/dotfiles/waybar/scripts/rofi_bluetooth.py",
+    "on-click-right": "bluetoothctl power toggle"
   },
   "pulseaudio": {
     "format": "{icon}",

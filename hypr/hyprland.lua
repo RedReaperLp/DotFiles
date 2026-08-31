@@ -144,12 +144,11 @@ hl.config({
 
 	general = {
 		gaps_in = 5,
-		gaps_out = 20,
+		gaps_out = 15,
 		border_size = 2,
-		-- Sichere 8-Zeichen rgba Hex-Codes für Osaka Jade Theme
 		["col.active_border"] = "rgba(509475ff)",
 		["col.inactive_border"] = "rgba(111c18ff)",
-		resize_on_border = false,
+		resize_on_border = true,
 		allow_tearing = false,
 		layout = "dwindle",
 	},
@@ -239,6 +238,18 @@ hl.window_rule({
 	float = true,
 })
 
+hl.window_rule({
+	name = "render-unfocused-steam-games",
+	match = { class = "^(steam_app_.*)$" },
+	render_unfocused = true,
+})
+
+hl.window_rule({
+	name = "render-unfocused-gamescope",
+	match = { class = "^(gamescope)$" },
+	render_unfocused = true,
+})
+
 -- Umgebungsvariablen aus machine.lua mergen
 if machine.env then
 	for _, e in ipairs(machine.env) do
@@ -254,6 +265,7 @@ hl.on("hyprland.start", function()
 		"killall xdg-desktop-portal-hyprland; /usr/lib/xdg-desktop-portal-hyprland &",
 		"killall xdg-desktop-portal; /usr/lib/xdg-desktop-portal &",
 		"sleep 1 && waybar",
+		"mako &",
 		"hyprctl setcursor Adwaita 24",
 		"gsettings set org.gnome.desktop.interface cursor-theme 'Adwaita'",
 		"~/.local/bin/trcc gui",
@@ -285,11 +297,13 @@ hl.bind(
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind("ALT + Space", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(powerMenu))
+hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("python3 /home/raphaelk/dotfiles/waybar/scripts/rofi_powermenu.py"))
 hl.bind(mainMod .. " + S", hl.dsp.exec_cmd(screenshotMenu))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("python3 /home/raphaelk/dotfiles/waybar/scripts/rofi_bluetooth.py"))
+hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("python3 /home/raphaelk/dotfiles/waybar/scripts/rofi_media.py"))
 
 hl.bind(mainMod .. " + U", hl.dsp.window.move({ workspace = "special:magic" }))
 hl.bind(mainMod .. " + I", hl.dsp.workspace.toggle_special("magic"))
@@ -349,7 +363,7 @@ hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true 
 -- Philips Monitor (Links, Hauptbildschirm)
 hl.monitor({
 	output = "desc:Philips Consumer Electronics Company PHL 322E1 0x00001FAE",
-	mode = "1920x1080@60",
+	mode = "1920x1080@75",
 	position = "0x0",
 	scale = 1,
 })

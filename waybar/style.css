@@ -29,7 +29,8 @@ window#waybar {
 #pulseaudio,
 #power-profiles-daemon,
 #cpu,
-#battery {
+#battery,
+#custom-device-batteries {
   background-color: @surface;
   border: 1.5px solid @border-color;
   border-radius: 10px;
@@ -49,7 +50,8 @@ window#waybar {
 #pulseaudio:hover,
 #power-profiles-daemon:hover,
 #cpu:hover,
-#battery:hover {
+#battery:hover,
+#custom-device-batteries:hover {
   background-color: rgba(50, 94, 75, 0.25);
   border-color: @border-hover;
   box-shadow: 0 0 8px rgba(80, 148, 117, 0.4);
@@ -251,6 +253,33 @@ window#waybar {
   }
   to {
     background-color: rgba(255, 83, 69, 0.3);
+  }
+}
+
+#custom-device-batteries {
+  font-size: 15px;
+}
+
+#custom-device-batteries.warning {
+  background-color: rgba(229, 199, 54, 0.1);
+  border-color: rgba(229, 199, 54, 0.3);
+}
+
+#custom-device-batteries.critical {
+  background-color: rgba(255, 83, 69, 0.15);
+  border-color: rgba(255, 83, 69, 0.5);
+  animation: critical-device-battery-blink 0.5s infinite alternate;
+}
+
+@keyframes critical-device-battery-blink {
+  from {
+    background-color: rgba(255, 83, 69, 0.1);
+    border-color: rgba(255, 83, 69, 0.3);
+  }
+  to {
+    background-color: rgba(255, 83, 69, 0.4);
+    border-color: rgba(255, 83, 69, 0.8);
+    box-shadow: 0 0 8px rgba(255, 83, 69, 0.6);
   }
 }
 

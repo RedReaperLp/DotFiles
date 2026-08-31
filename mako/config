@@ -3,10 +3,11 @@ group-by=app-name,summary,body
 default-timeout=5000
 width=420
 outer-margin=20
-padding=10,15
+padding=14,18
 border-size=2
+border-radius=14
 max-icon-size=32
-font=sans-serif 14px
+font=JetBrains Mono 11
 
 text-color=#C1C497
 border-color=#509475

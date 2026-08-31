@@ -1,0 +1,106 @@
+/*****----- Sleek & Compact Media Control Theme -----*****/
+configuration {
+    show-icons: true;
+}
+
+/*****----- Global Properties -----*****/
+* {
+    font: "JetBrainsMono Nerd Font Bold 10";
+    background-color: transparent;
+    text-color: #F6F5DD;
+}
+
+/*****----- Main Window -----*****/
+window {
+    transparency: "real";
+    location: northwest;
+    anchor: northwest;
+    x-offset: 260px;
+    y-offset: 38px;
+    width: 300px;
+    margin: 0px;
+    padding: 0px;
+    border: 2px;
+    border-radius: 14px;
+    border-color: rgba(80, 148, 117, 0.5);
+    background-color: rgba(17, 28, 24, 0.96);
+    children: [ mainbox ];
+}
+
+/*****----- Main Box -----*****/
+mainbox {
+    spacing: 10px;
+    margin: 0px;
+    padding: 12px;
+    background-color: transparent;
+    children: [ inputbar, listview ];
+}
+
+/*****----- Inputbar (Song Info Header) -----*****/
+inputbar {
+    spacing: 10px;
+    padding: 4px 4px;
+    background-color: transparent;
+    text-color: #F6F5DD;
+    children: [ "icon-cover", "prompt" ];
+}
+
+icon-cover {
+    filename: "multimedia-player";
+    size: 44px;
+    border-radius: 8px;
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+    expand: false;
+}
+
+prompt {
+    background-color: transparent;
+    text-color: #F6F5DD;
+    font: "JetBrainsMono Nerd Font Bold 10";
+    vertical-align: 0.5;
+    horizontal-align: 0.0;
+    expand: true;
+}
+
+/*****----- Listview (Control Buttons) -----*****/
+listview {
+    enabled: true;
+    columns: 4;
+    lines: 1;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+    layout: vertical;
+    fixed-height: true;
+    fixed-columns: true;
+    spacing: 6px;
+    background-color: transparent;
+}
+
+/*****----- Elements -----*****/
+element {
+    enabled: true;
+    padding: 8px 0px;
+    border-radius: 8px;
+    background-color: rgba(35, 55, 43, 0.5);
+    text-color: #C1C497;
+    cursor: pointer;
+    children: [ "element-text" ];
+}
+
+element selected.normal {
+    background-color: rgba(80, 148, 117, 0.5);
+    text-color: #2DD5B7;
+    border: 1px;
+    border-color: rgba(80, 148, 117, 0.8);
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+    font: "JetBrainsMono Nerd Font 13";
+    cursor: inherit;
+    vertical-align: 0.5;
+    horizontal-align: 0.5;
+}
