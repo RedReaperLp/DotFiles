@@ -269,8 +269,9 @@ hl.on("hyprland.start", function()
 		"hyprctl setcursor Adwaita 24",
 		"gsettings set org.gnome.desktop.interface cursor-theme 'Adwaita'",
 		"~/.local/bin/trcc gui",
-		"pipeweaver-daemon --background",
+		"sleep 2 && pipeweaver-daemon --background",
 		"/home/raphaelk/automation/spotify.sh",
+		"linux-wallpaperengine --screen-root DP-2 --silent 3120881329",
 	}
 
 	-- Globale Autostarts ausführen
@@ -351,8 +352,16 @@ hl.bind(
 )
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { locked = true })
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("/home/raphaelk/.config/hypr/scripts/change_brightness.sh up 5"), { repeating = true, locked = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("/home/raphaelk/.config/hypr/scripts/change_brightness.sh down 5"), { repeating = true, locked = true })
+hl.bind(
+	"XF86MonBrightnessUp",
+	hl.dsp.exec_cmd("/home/raphaelk/.config/hypr/scripts/change_brightness.sh up 5"),
+	{ repeating = true, locked = true }
+)
+hl.bind(
+	"XF86MonBrightnessDown",
+	hl.dsp.exec_cmd("/home/raphaelk/.config/hypr/scripts/change_brightness.sh down 5"),
+	{ repeating = true, locked = true }
+)
 
 -- 6. Playerctl & Screenshot (Echt Nativ)
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
