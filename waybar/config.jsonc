@@ -13,7 +13,8 @@
     "pulseaudio",
     "power-profiles-daemon",
     "cpu",
-    "custom/device-batteries"
+    "custom/device-batteries",
+    "battery"
   ],
   "group/workspaces": {
     "orientation": "horizontal",
@@ -129,18 +130,19 @@
     "on-click": "nm-connection-editor"
   },
   "battery": {
-    "format": "{capacity}% {icon}",
-    "format-discharging": "{icon}",
-    "format-charging": "{icon}",
-    "format-plugged": "",
+    "format": "{icon} {capacity}%",
+    "format-discharging": "{icon} {capacity}%",
+    "format-charging": "{icon} {capacity}% ",
+    "format-plugged": " {capacity}%",
+    "format-full": "󰂅 {capacity}%",
     "format-icons": {
       "charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
       "default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
     },
-    "format-full": "󰂅",
-    "tooltip-format-discharging": "{power:>1.0f}W↓ {capacity}%",
-    "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
-    "interval": 5,
+    "tooltip-format-discharging": "Laptop Akku: {capacity}%\nEntladerate: {power:>1.1f}W\nRestzeit: {time}",
+    "tooltip-format-charging": "Laptop Akku: {capacity}%\nLaderate: {power:>1.1f}W\nRestzeit bis voll: {time}",
+    "tooltip-format-full": "Laptop Akku: Voll aufgeladen (100%)",
+    "interval": 3,
     "on-click": "~/.config/rofi/powermenu/type-5/powermenu.sh",
     "states": {
       "warning": 20,

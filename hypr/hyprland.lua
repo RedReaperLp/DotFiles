@@ -279,6 +279,7 @@ hl.on("hyprland.start", function()
 		"sleep 6 && pipeweaver-daemon --background",
 		"/home/raphaelk/automation/spotify.sh",
 		"linux-wallpaperengine --screen-root DP-2 --silent 3120881329",
+		"lan-mouse daemon",
 	}
 
 	-- Globale Autostarts ausführen
