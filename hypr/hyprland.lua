@@ -142,6 +142,13 @@ hl.config({
 		{ "XCURSOR_SIZE", "24" },
 		{ "HYPRCURSOR_SIZE", "24" },
 		{ "QT_QPA_PLATFORMTHEME", "qt6ct" },
+		{ "GDK_BACKEND", "wayland,x11,*" },
+		{ "QT_QPA_PLATFORM", "wayland;xcb" },
+		{ "SDL_VIDEODRIVER", "wayland" },
+		{ "CLUTTER_BACKEND", "wayland" },
+		{ "XDG_CURRENT_DESKTOP", "Hyprland" },
+		{ "XDG_SESSION_TYPE", "wayland" },
+		{ "XDG_SESSION_DESKTOP", "Hyprland" },
 	},
 
 	general = {
@@ -267,10 +274,12 @@ end
 -- 3. Autostart Hook
 hl.on("hyprland.start", function()
 	local cmds = {
-		"dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP",
-		"systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP",
+		"dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE",
+		"systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE",
 		"killall xdg-desktop-portal-hyprland; /usr/lib/xdg-desktop-portal-hyprland &",
 		"killall xdg-desktop-portal; /usr/lib/xdg-desktop-portal &",
+		"wl-paste --type text --watch cliphist store &",
+		"wl-paste --type image --watch cliphist store &",
 		"sleep 1 && waybar",
 		"mako &",
 		"hyprctl setcursor Adwaita 24",
