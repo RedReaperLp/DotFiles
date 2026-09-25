@@ -80,8 +80,8 @@
           },
           "volumes": {
             "volume": {
-              "A": 70,
-              "B": 70
+              "A": 90,
+              "B": 90
             },
             "volumes_linked": 1.0
           }
@@ -105,8 +105,8 @@
           },
           "volumes": {
             "volume": {
-              "A": 30,
-              "B": 30
+              "A": 100,
+              "B": 100
             },
             "volumes_linked": 1.0
           }
@@ -169,10 +169,6 @@
             {
               "name": "alsa_output.usb-Logitech_G935_Gaming_Headset-00.iec958-stereo",
               "description": "G935 Gaming Headset Digitales Stereo (IEC958)"
-            },
-            {
-              "name": "alsa_output.usb-Logitech_G935_Gaming_Headset-00.analog-stereo",
-              "description": "G935 Gaming Headset Analoges Stereo"
             }
           ],
           "attached_port_maps": []
@@ -211,7 +207,7 @@
             }
           },
           "mute_state": "Unmuted",
-          "volume": 100,
+          "volume": 82,
           "mix": "A",
           "attached_devices": [],
           "attached_port_maps": []
@@ -233,22 +229,22 @@
     }
   },
   "routes": {
-    "01KZC90XH45FP62N8H2Y87MMJS": [
-      "01KZC86HKEYS9A2CTCM5SHB0GJ",
-      "01KZC6XN0CW0V2JD2JPKH5X49E"
+    "01KZC8Z7CEF3QTY90YBEVZBMYK": [
+      "01KZC6XN0CW0V2JD2JPKH5X49E",
+      "01KZC86HKEYS9A2CTCM5SHB0GJ"
     ],
-    "01KZC6XN0CZAKTFG07EAXSJRWW": [
+    "01KZC6XN0C1PT3YRNF8RF040QA": [
       "01KZC6XN0CW0V2JD2JPKH5X49E",
       "01KZC86HKEYS9A2CTCM5SHB0GJ"
     ],
     "01KZC6XN0CRMMZBHQCXP78FYWC": [
       "01KZC6XN0C8HT7DP0Y6X7WS064"
     ],
-    "01KZC8Z7CEF3QTY90YBEVZBMYK": [
-      "01KZC86HKEYS9A2CTCM5SHB0GJ",
-      "01KZC6XN0CW0V2JD2JPKH5X49E"
+    "01KZC90XH45FP62N8H2Y87MMJS": [
+      "01KZC6XN0CW0V2JD2JPKH5X49E",
+      "01KZC86HKEYS9A2CTCM5SHB0GJ"
     ],
-    "01KZC6XN0C1PT3YRNF8RF040QA": [
+    "01KZC6XN0CZAKTFG07EAXSJRWW": [
       "01KZC86HKEYS9A2CTCM5SHB0GJ",
       "01KZC6XN0CW0V2JD2JPKH5X49E"
     ]
@@ -256,9 +252,6 @@
   "audio_quantum": "Quantum2048",
   "application_mapping": {
     "Source": {
-      "chromium": {
-        "Chromium": "01KZC6XN0CZAKTFG07EAXSJRWW"
-      },
       "vesktop": {
         "vesktop": "01KZC6XN0C1PT3YRNF8RF040QA",
         "Chromium": "01KZC6XN0CZAKTFG07EAXSJRWW"
@@ -266,19 +259,22 @@
       "firefox": {
         "Firefox": "01KZC6XN0CZAKTFG07EAXSJRWW"
       },
-      "chrome": {
-        "Google Chrome": "01KZC6XN0CZAKTFG07EAXSJRWW"
-      },
       "wine-preloader": {
-        "WWZ": "01KZC90XH45FP62N8H2Y87MMJS",
         "Captain of Industry.exe": "01KZC90XH45FP62N8H2Y87MMJS",
-        "Worms W.M.D.exe": "01KZC90XH45FP62N8H2Y87MMJS"
+        "Worms W.M.D.exe": "01KZC90XH45FP62N8H2Y87MMJS",
+        "WWZ": "01KZC90XH45FP62N8H2Y87MMJS"
+      },
+      "spotify": {
+        "Spotify": "01KZC8Z7CEF3QTY90YBEVZBMYK"
       },
       "wine64-preloader": {
         "PEAK.exe": "01KZC90XH45FP62N8H2Y87MMJS"
       },
-      "spotify": {
-        "Spotify": "01KZC8Z7CEF3QTY90YBEVZBMYK"
+      "chromium": {
+        "Chromium": "01KZC6XN0CZAKTFG07EAXSJRWW"
+      },
+      "chrome": {
+        "Google Chrome": "01KZC6XN0CZAKTFG07EAXSJRWW"
       }
     },
     "Target": {
