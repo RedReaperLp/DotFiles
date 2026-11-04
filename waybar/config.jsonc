@@ -200,7 +200,7 @@
     "return-type": "json"
   },
   "custom/idle-indicator": {
-    "on-click": "pkill -x hypridle || hypridle &",
+    "on-click": "pkill -x hypridle || hypridle ${HYPRIDLE_CONFIG:+-c \"$HYPRIDLE_CONFIG\"} &",
     "exec": "/home/raphaelk/dotfiles/waybar/scripts/idle.sh",
     "signal": 9,
     "interval": 3,

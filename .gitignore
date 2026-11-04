@@ -1,2 +1,5 @@
 hypr/machine.lua
 openvpn/pass.txt
+hypr/monitors.conf
+hypr/workspaces.conf
+hypr/hyprland.conf

@@ -264,6 +264,17 @@ hl.window_rule({
 	render_unfocused = true,
 })
 
+-- Roter Rand, solange im Fenster sudo läuft (siehe sudo_border.lua)
+local has_sudo_border, sudo_border = pcall(require, "sudo_border")
+if has_sudo_border then
+	-- pcall: ein Fehler hier (z.B. andere Hyprland-Version) soll nicht die ganze Config abbrechen
+	pcall(sudo_border.setup, {
+		color = "rgb(e04545)",
+		-- Wie lange sudo das Passwort speichert (sudoers: timestamp_timeout), pro Gerät in machine.lua
+		cache_seconds = (machine.sudo_cache_minutes or 15) * 60,
+	})
+end
+
 -- Umgebungsvariablen aus machine.lua mergen
 if machine.env then
 	for _, e in ipairs(machine.env) do
@@ -290,6 +301,8 @@ hl.on("hyprland.start", function()
 		"linux-wallpaperengine --screen-root DP-2 --silent 3120881329",
 		"lan-mouse daemon",
 		"kdeconnectd",
+		-- Config: hypridle.conf (machine.lua kann per HYPRIDLE_CONFIG eine eigene setzen)
+		'pgrep -x hypridle || hypridle ${HYPRIDLE_CONFIG:+-c "$HYPRIDLE_CONFIG"}',
 	}
 
 	-- Globale Autostarts ausführen
