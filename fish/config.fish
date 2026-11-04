@@ -21,3 +21,10 @@ alias vpn='tmux new -s vpn "sudo openvpn --config ~/.config/openvpn/uni_3.ovpn -
 alias cmod='chmod +x '
 alias DebugTunnel="ssh -i ~/.ssh/5_9_23_72_KEY -L 5005:localhost:5005 root@10.10.10.105"
 alias vps="kitten ssh -i ~/.ssh/5_9_23_72_linux root@direct.redreaperlp.de"
+
+alias steam-safe="flatpak run com.valvesoftware.Steam"
+alias steam-native="command steam"
+
+function ssh
+    command kitty +kitten ssh $argv
+end
