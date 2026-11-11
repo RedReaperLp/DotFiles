@@ -24,7 +24,8 @@ local function signal_waybar(row_changed)
 end
 
 -- Funktion: Vertikaler Sprung (Zeilenwechsel) – nur auf dem fokussierten Monitor
-local function jump_to_row(new_row)
+-- is_move = true: aktives Fenster mitnehmen (in die gleiche Spalte der Zielzeile)
+local function jump_to_row(new_row, is_move)
 	local mon_idx, _, col = matrix.state()
 
 	-- Wrap-around: Von Zeile 6 nach unten springt zu Zeile 1 und umgekehrt
@@ -35,8 +36,12 @@ local function jump_to_row(new_row)
 	-- 1. Animation dynamisch auf vertikal stellen
 	hl.dispatch(hl.dsp.exec_cmd("hyprctl keyword animation 'workspaces, 1, 4, default, slidevert'"))
 
-	-- 2. Zum Ziel-Workspace springen (immer auf dem aktuellen Monitor)
-	hl.dispatch(hl.dsp.focus({ workspace = target, on_current_monitor = true }))
+	-- 2. Zum Ziel-Workspace springen (immer auf dem aktuellen Monitor), ggf. mit Fenster
+	if is_move then
+		hl.dispatch(hl.dsp.window.move({ workspace = target, follow = true }))
+	else
+		hl.dispatch(hl.dsp.focus({ workspace = target, on_current_monitor = true }))
+	end
 
 	-- 3. Kurzes Feedback & Signal für Waybar Zeilenanzeige & Workspaces
 	hl.dispatch(hl.dsp.exec_cmd("notify-send 'Zeile " .. (new_row + 1) .. " aktiv' -t 400"))
@@ -44,9 +49,9 @@ local function jump_to_row(new_row)
 end
 
 -- Relativer Zeilensprung ausgehend von der aktuellen Zeile des fokussierten Monitors
-local function jump_row_relative(delta)
+local function jump_row_relative(delta, is_move)
 	local _, row = matrix.state()
-	jump_to_row(row + delta)
+	jump_to_row(row + delta, is_move)
 end
 
 -- Funktion: Horizontaler Sprung (Spaltenwechsel innerhalb der Zeile des fokussierten Monitors)
@@ -92,6 +97,15 @@ end)
 hl.bind(mainMod .. " + down", function()
 	-- Hyprland ID-Logik: ID wird größer = Slide nach unten
 	jump_row_relative(1)
+end)
+
+-- SUPER + SHIFT + Up / Down: aktives Fenster eine Zeile nach oben/unten verschieben
+hl.bind(mainMod .. " + SHIFT + up", function()
+	jump_row_relative(-1, true)
+end)
+
+hl.bind(mainMod .. " + SHIFT + down", function()
+	jump_row_relative(1, true)
 end)
 
 -- 3. Workspace-Navigation (SUPER + Ziffer)
@@ -384,8 +398,9 @@ hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
 -- SUPER + up/down ist durch die Matrix-Navigation (Zeilenwechsel) belegt, siehe oben
 
--- Fenster auf den Nachbarmonitor verschieben (landet auf dessen gerade offenem Workspace)
-for _, dir in ipairs({ "left", "right", "up", "down" }) do
+-- Fenster auf den Nachbarmonitor links/rechts verschieben (landet auf dessen gerade offenem Workspace)
+-- (SUPER + SHIFT + up/down verschiebt in die Zeile darüber/darunter, siehe Matrix-Navigation)
+for _, dir in ipairs({ "left", "right" }) do
 	hl.bind(mainMod .. " + SHIFT + " .. dir, function()
 		matrix.move_window_to_monitor(dir)
 	end)
