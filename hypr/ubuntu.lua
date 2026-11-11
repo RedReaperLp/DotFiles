@@ -63,10 +63,7 @@ local function setup_cursor(cursor)
 	cursor = cursor or {}
 	local theme = cursor.theme or "Adwaita"
 	local size = tostring(cursor.size or 24)
-	hl.env(
-		"XCURSOR_PATH",
-		home .. "/.local/share/icons:" .. home .. "/.icons:/usr/share/icons:/usr/share/pixmaps"
-	)
+	hl.env("XCURSOR_PATH", home .. "/.local/share/icons:" .. home .. "/.icons:/usr/share/icons:/usr/share/pixmaps")
 	hl.env("XCURSOR_THEME", theme)
 	hl.env("XCURSOR_SIZE", size)
 	hl.env("HYPRCURSOR_THEME", theme)
@@ -351,5 +348,16 @@ function M.setup(opts)
 end
 
 M.autostart = {}
+
+-- 3. Autostart Hook
+hl.on("hyprland.start", function()
+	local cmds = {
+		[[bash -c 'tailscale status >/dev/null 2>&1 || (tailscale up --accept-routes 2>&1 | grep --line-buffered -m 1 -o "https://[^ ]*" | xargs -r xdg-open)']],
+	}
+
+	for _, cmd in ipairs(cmds) do
+		hl.exec_cmd(cmd)
+	end
+end)
 
 return M
