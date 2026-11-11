@@ -172,19 +172,11 @@ local function apply_monitor_lines(content)
 	return applied
 end
 
--- Default-Workspaces nach Position verteilen: Monitor ganz links = 1, nächster = 2, ...
--- (Hyprland verteilt sonst nach Monitor-ID, unabhängig von der Anordnung)
+-- Default-Workspaces nach Position verteilen: Monitor ganz links = 1, nächster = 31, ...
+-- (eigene Workspace-Matrix pro Monitor, siehe workspace_matrix.lua;
+-- Hyprland verteilt sonst nach Monitor-ID, unabhängig von der Anordnung)
 local function assign_workspaces_by_position(list)
-	table.sort(list, function(a, b)
-		if a.x ~= b.x then
-			return a.x < b.x
-		end
-		return a.y < b.y
-	end)
-	for i, m in ipairs(list) do
-		hl.workspace_rule({ workspace = tostring(i), monitor = m.monitor, default = true })
-	end
-	return list
+	return require("workspace_matrix").assign_defaults(list)
 end
 
 local function apply_workspace_lines(content)
@@ -284,11 +276,13 @@ local function setup_monitor_profiles(default_rules, auto_workspaces)
 	end
 	if auto_workspaces ~= false then
 		M.workspace_order = assign_workspaces_by_position(ws_targets)
-	end
-
-	local ws_content = read_file(nwg_files[2])
-	if ws_content then
-		apply_workspace_lines(ws_content)
+	else
+		-- workspaces.conf aus nwg-displays nummeriert 1, 2, 3 ... und würde die
+		-- Workspace-Matrix pro Monitor (1 / 31 / 61 ...) durchkreuzen -> nur ohne auto_workspaces
+		local ws_content = read_file(nwg_files[2])
+		if ws_content then
+			apply_workspace_lines(ws_content)
+		end
 	end
 
 	-- Auf "Anwenden" in nwg-displays reagieren: Dateien alle 2s vergleichen

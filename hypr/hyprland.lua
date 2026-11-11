@@ -9,43 +9,50 @@ local powerMenu = "~/.config/rofi/powermenu/type-5/powermenu.sh"
 local screenshotMenu = "~/.config/rofi/applets/bin/screenshot.sh"
 
 --------------------------------------------------
--- HYPRLAND MATRIX NAVIGATION
+-- HYPRLAND MATRIX NAVIGATION (pro Monitor, siehe workspace_matrix.lua)
 --------------------------------------------------
 
-local current_row = 0
-local current_col = 1 -- Speichert die "Position" innerhalb der Zeile
-local workspaces_per_row = 5
-local max_rows = 6
+local matrix = require("workspace_matrix")
+-- Wird von matrix.assign_defaults() gesetzt (z.B. durch ubuntu.lua mit Monitor-Profilen)
+_G.__matrix_defaults_assigned = false
 
--- Funktion: Vertikaler Sprung (Zeilenwechsel)
+local function signal_waybar(row_changed)
+	if row_changed then
+		hl.dispatch(hl.dsp.exec_cmd("pkill -RTMIN+2 waybar"))
+	end
+	hl.dispatch(hl.dsp.exec_cmd("pkill -RTMIN+1 waybar"))
+end
+
+-- Funktion: Vertikaler Sprung (Zeilenwechsel) – nur auf dem fokussierten Monitor
 local function jump_to_row(new_row)
-	-- Wrap-around: Von Zeile 6 nach unten springt zu Zeile 1 und umgekehrt
-	if new_row < 0 then
-		new_row = max_rows - 1
-	end
-	if new_row >= max_rows then
-		new_row = 0
-	end
+	local mon_idx, _, col = matrix.state()
 
-	current_row = new_row
-	local target = (current_row * workspaces_per_row) + current_col
+	-- Wrap-around: Von Zeile 6 nach unten springt zu Zeile 1 und umgekehrt
+	new_row = new_row % matrix.rows
+
+	local target = matrix.workspace_id(mon_idx, new_row, col)
 
 	-- 1. Animation dynamisch auf vertikal stellen
 	hl.dispatch(hl.dsp.exec_cmd("hyprctl keyword animation 'workspaces, 1, 4, default, slidevert'"))
 
-	-- 2. Zum Ziel-Workspace springen (direkt unter/über dem aktuellen)
-	hl.dispatch(hl.dsp.focus({ workspace = target }))
+	-- 2. Zum Ziel-Workspace springen (immer auf dem aktuellen Monitor)
+	hl.dispatch(hl.dsp.focus({ workspace = target, on_current_monitor = true }))
 
 	-- 3. Kurzes Feedback & Signal für Waybar Zeilenanzeige & Workspaces
-	hl.dispatch(hl.dsp.exec_cmd("notify-send 'Zeile " .. (current_row + 1) .. " aktiv' -t 400"))
-	hl.dispatch(hl.dsp.exec_cmd("pkill -RTMIN+2 waybar"))
-	hl.dispatch(hl.dsp.exec_cmd("pkill -RTMIN+1 waybar"))
+	hl.dispatch(hl.dsp.exec_cmd("notify-send 'Zeile " .. (new_row + 1) .. " aktiv' -t 400"))
+	signal_waybar(true)
 end
 
--- Funktion: Horizontaler Sprung (Spaltenwechsel innerhalb der Zeile)
+-- Relativer Zeilensprung ausgehend von der aktuellen Zeile des fokussierten Monitors
+local function jump_row_relative(delta)
+	local _, row = matrix.state()
+	jump_to_row(row + delta)
+end
+
+-- Funktion: Horizontaler Sprung (Spaltenwechsel innerhalb der Zeile des fokussierten Monitors)
 local function jump_to_col(new_col, is_move)
-	current_col = new_col
-	local target = (current_row * workspaces_per_row) + current_col
+	local mon_idx, row = matrix.state()
+	local target = matrix.workspace_id(mon_idx, row, new_col)
 
 	-- Animation dynamisch zurück auf horizontal stellen
 	hl.dispatch(hl.dsp.exec_cmd("hyprctl keyword animation 'workspaces, 1, 4, default, slide'"))
@@ -53,11 +60,11 @@ local function jump_to_col(new_col, is_move)
 	if is_move then
 		hl.dispatch(hl.dsp.window.move({ workspace = target }))
 	else
-		hl.dispatch(hl.dsp.focus({ workspace = target }))
+		hl.dispatch(hl.dsp.focus({ workspace = target, on_current_monitor = true }))
 	end
 
 	-- Signal für Waybar Workspaces
-	hl.dispatch(hl.dsp.exec_cmd("pkill -RTMIN+1 waybar"))
+	signal_waybar(false)
 end
 
 -- 1. Mapping der Corsair G-Keys (Direkter Zeilensprung)
@@ -76,21 +83,19 @@ for key, row_idx in pairs(g_key_map) do
 	end)
 end
 
--- 2. Up / Down für relative Zeilensprünge
--- HINWEIS: Ersetze deine alten Binds für Fenster-Fokus ("SUPER + up/down"),
--- falls du sie mit diesen hier überschreiben möchtest.
+-- 2. Up / Down für relative Zeilensprünge (nur fokussierter Monitor)
 hl.bind(mainMod .. " + up", function()
 	-- Hyprland ID-Logik: ID wird kleiner = Slide nach oben
-	jump_to_row(current_row - 1)
+	jump_row_relative(-1)
 end)
 
 hl.bind(mainMod .. " + down", function()
 	-- Hyprland ID-Logik: ID wird größer = Slide nach unten
-	jump_to_row(current_row + 1)
+	jump_row_relative(1)
 end)
 
 -- 3. Workspace-Navigation (SUPER + Ziffer)
-for i = 1, 5 do
+for i = 1, matrix.cols do
 	local key = tostring(i)
 
 	-- Springen (Horizontal)
@@ -114,6 +119,28 @@ if not has_machine then
 	machine = {}
 end
 --
+
+-- Default-Workspaces pro Monitor (WS 1 / 31 / 61 ...), falls machine.lua das nicht schon
+-- erledigt hat (ubuntu.lua macht es anhand der Monitor-Profile)
+if not _G.__matrix_defaults_assigned then
+	matrix.assign_defaults_from_current()
+end
+
+-- Nach Start, Reload und Hotplug Monitore auf ihren eigenen Workspace-Block setzen
+local function schedule_normalize()
+	if _G.__matrix_normalize_timer then
+		_G.__matrix_normalize_timer:set_enabled(false)
+	end
+	_G.__matrix_normalize_timer = hl.timer(function()
+		require("workspace_matrix").normalize()
+	end, { timeout = 1000, type = "oneshot" })
+end
+if not _G.__matrix_hooks then
+	_G.__matrix_hooks = true
+	hl.on("hyprland.start", schedule_normalize)
+	hl.on("config.reloaded", schedule_normalize)
+	hl.on("monitor.added", schedule_normalize)
+end
 
 if machine.binds then
 	for _, b in ipairs(machine.binds) do
@@ -355,8 +382,14 @@ hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("killall wayvnc && hyprctl ke
 -- Fokus verschieben
 hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }))
+-- SUPER + up/down ist durch die Matrix-Navigation (Zeilenwechsel) belegt, siehe oben
+
+-- Fenster auf den Nachbarmonitor verschieben (landet auf dessen gerade offenem Workspace)
+for _, dir in ipairs({ "left", "right", "up", "down" }) do
+	hl.bind(mainMod .. " + SHIFT + " .. dir, function()
+		matrix.move_window_to_monitor(dir)
+	end)
+end
 
 -- Workspaces
 -- for i = 1, 10 do
