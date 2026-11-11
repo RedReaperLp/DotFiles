@@ -140,21 +140,22 @@ if not _G.__matrix_defaults_assigned then
 	matrix.assign_defaults_from_current()
 end
 
--- Nach Start, Reload und Hotplug Monitore auf ihren eigenen Workspace-Block setzen
-local function schedule_normalize()
-	if _G.__matrix_normalize_timer then
-		_G.__matrix_normalize_timer:set_enabled(false)
-	end
-	_G.__matrix_normalize_timer = hl.timer(function()
-		require("workspace_matrix").normalize()
-	end, { timeout = 1000, type = "oneshot" })
-end
-if not _G.__matrix_hooks then
-	_G.__matrix_hooks = true
-	hl.on("hyprland.start", schedule_normalize)
-	hl.on("config.reloaded", schedule_normalize)
-	hl.on("monitor.added", schedule_normalize)
-end
+-- Nach Start, Reload und Hotplug Workspaces zu ihrem Monitor zurückschieben und den zuletzt
+-- sichtbaren Workspace pro Monitor wiederherstellen (z.B. nach Ab-/Anstecken der Monitore)
+matrix.schedule_restore(1000)
+hl.on("hyprland.start", function()
+	matrix.schedule_restore(1000)
+end)
+hl.on("monitor.added", function()
+	-- etwas länger warten: Ubuntu lädt nach dem Anstecken erst noch das Monitor-Profil neu
+	matrix.schedule_restore(2500)
+end)
+hl.on("monitor.removed", function()
+	matrix.schedule_restore(1000)
+end)
+hl.on("workspace.active", function()
+	matrix.remember()
+end)
 
 if machine.binds then
 	for _, b in ipairs(machine.binds) do
