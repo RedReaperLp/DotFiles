@@ -3,7 +3,7 @@
 
 local mainMod = "SUPER"
 local terminal = "kitty"
-local fileManager = "dolphin"
+local fileManager = "nautilus"
 local menu = "~/.config/rofi/launchers/type-6/launcher.sh"
 local powerMenu = "~/.config/rofi/powermenu/type-5/powermenu.sh"
 local screenshotMenu = "~/.config/rofi/applets/bin/screenshot.sh"
